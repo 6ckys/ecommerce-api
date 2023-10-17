@@ -40,18 +40,39 @@ export class CategoriesController {
   }
 
   @Put("/:id")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./upload/categories",
+        filename: (_request, file, callback) =>
+        callback(null, `${new Date().getTime()}-${file.originalname}`),
+      })
+    })
+  )
   async updateCategory(@Res() response,@Param('id') CategoryId, @Body() updateCategoryDto: UpdateCategoryDto, @UploadedFile() file: Express.Multer.File){
 
     try{
-      const existingCategory = await this.categoriesService.updateCategory(CategoryId, updateCategoryDto);
-      return response.status(HttpStatus.CREATED).json({
-        message: 'Category has been successfully updated',
-        data: existingCategory,
-        status: HttpStatus.OK
-      });
+      if(file==undefined||file==null){
+        updateCategoryDto.file=(await this.categoriesService.getCategory(CategoryId)).file;
+        const existingCategory = await this.categoriesService.updateCategory(CategoryId, updateCategoryDto);
+        return response.status(HttpStatus.CREATED).json({
+          message: 'Category has been successfully updated',
+          data: existingCategory,
+          status: HttpStatus.OK
+        });
+      }else{
+        updateCategoryDto.file=file.filename;
+        const existingCategory = await this.categoriesService.updateCategory(CategoryId, updateCategoryDto);
+        return response.status(HttpStatus.CREATED).json({
+          message: 'Category has been successfully updated',
+          data: existingCategory,
+          status: HttpStatus.OK
+        });
+      }
+      
     } catch (err){
       return response.status(HttpStatus.BAD_REQUEST).json({
-        message: err.response,
+        message: "erreur: "+err,
         status: HttpStatus.BAD_REQUEST,
         data: null
       })

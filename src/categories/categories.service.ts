@@ -15,7 +15,7 @@ export class CategoriesService {
   }
 
   async updateCategory(CategoryId: string, updateCategoryDto: UpdateCategoryDto): Promise<ICategory> {
-    const existingCategory = await this.CategoryModel.findByIdAndUpdate(CategoryId, updateCategoryDto);
+    const existingCategory = await this.CategoryModel.findByIdAndUpdate(CategoryId, updateCategoryDto, {new: true});
     if(!existingCategory){
       throw new NotFoundException(`Category #${CategoryId} not found`);
     }
@@ -23,7 +23,7 @@ export class CategoriesService {
   }
 
   async getAllCategorys(): Promise<ICategory[]> {
-    const CategoryData = await this.CategoryModel.find().select("-__v");
+    const CategoryData = await this.CategoryModel.find().populate("subcategories").select("-__v");
     if(!CategoryData || CategoryData.length == 0){
       throw new NotFoundException('Categorys data not found!');
     }

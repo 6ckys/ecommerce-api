@@ -12,6 +12,9 @@ export class CategoryEntity extends Document{
 
     @Prop({required: true})
     file: string;
+
+    @Prop([{type: SchemaTypes.ObjectId, ref: 'Subcategories'}])
+    subcategories: Types.ObjectId[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(CategoryEntity);
