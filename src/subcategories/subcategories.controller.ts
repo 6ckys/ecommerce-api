@@ -11,16 +11,7 @@ export class SubcategoriesController {
   constructor(private readonly SubcategoriesService: subcategoriesService) {}
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor("file", {
-      storage: diskStorage({
-        destination: "./upload/Subcategories",
-        filename: (_request, file, callback) =>
-        callback(null, `${new Date().getTime()}-${file.originalname}`),
-      })
-    })
-  )
-  async createSubcategory(@Res() response, @Body() CreateSubcategoryDto: CreateSubcategoryDto, @UploadedFile() file: Express.Multer.File){
+  async createSubcategory(@Res() response, @Body() CreateSubcategoryDto: CreateSubcategoryDto){
 
     try{
       const newSubcategory = await this.SubcategoriesService.createSubcategory(CreateSubcategoryDto);

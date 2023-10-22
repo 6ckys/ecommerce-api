@@ -26,7 +26,7 @@ export class subcategoriesService {
   }
 
   async getAllSubcategorys(): Promise<ISubcategory[]> {
-    const SubcategoryData = await this.SubcategoryModel.find().select("-__v");
+    const SubcategoryData = await this.SubcategoryModel.find().populate("products").populate("category").select("-__v");
     if(!SubcategoryData || SubcategoryData.length == 0){
       throw new NotFoundException('Subcategorys data not found!');
     }
