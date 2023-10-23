@@ -26,7 +26,7 @@ export class productsService {
   }
 
   async getAllProducts(): Promise<IProduct[]> {
-    const ProductData = await this.ProductModel.find().select("-__v");
+    const ProductData = await this.ProductModel.find().populate("subcategory").select("-__v");
     if(!ProductData || ProductData.length == 0){
       throw new NotFoundException('Products data not found!');
     }
